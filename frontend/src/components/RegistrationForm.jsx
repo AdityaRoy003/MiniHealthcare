@@ -18,7 +18,7 @@ function RegistrationForm() {
       return;
     }
     try {
-      const res = await axios.post('https://your-backend.onrender.com/api/registration', formData);
+      const res = await axios.post('https://minihealthcare.onrender.com/api/registration', formData);
       setResponse(res.data.message);
       setFormData({ name: '', email: '', role: 'Patient', message: '' });
     } catch (err) {
