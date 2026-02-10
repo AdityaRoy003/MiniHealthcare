@@ -18,15 +18,23 @@ function RegistrationForm() {
       return;
     }
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      let apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      // Remove trailing slash if it exists to avoid double slashes
+      if (apiBaseUrl.endsWith('/')) {
+        apiBaseUrl = apiBaseUrl.slice(0, -1);
+      }
+
+      console.log("Attempting to submit to:", `${apiBaseUrl}/api/registration`);
+
       const res = await axios.post(`${apiBaseUrl}/api/registration`, formData, {
         headers: { "Content-Type": "application/json" }
       });
       setResponse(res.data.message);
       setFormData({ name: '', email: '', role: 'Patient', message: '' });
     } catch (err) {
-      console.error("Error submitting form:", err.response?.data || err.message);
-      setResponse(err.response?.data?.error || "Server error");
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message;
+      console.error("Full error details:", err.response?.data || err);
+      setResponse(`Error: ${errorMsg}`);
     }
   };
 
