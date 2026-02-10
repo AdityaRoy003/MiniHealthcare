@@ -18,11 +18,15 @@ function RegistrationForm() {
       return;
     }
     try {
-      const res = await axios.post('https://minihealthcare.onrender.com/api/registration', formData);
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      const res = await axios.post(`${apiBaseUrl}/api/registration`, formData, {
+        headers: { "Content-Type": "application/json" }
+      });
       setResponse(res.data.message);
       setFormData({ name: '', email: '', role: 'Patient', message: '' });
     } catch (err) {
-      setResponse("Error submitting form");
+      console.error("Error submitting form:", err.response?.data || err.message);
+      setResponse(err.response?.data?.error || "Server error");
     }
   };
 
@@ -33,7 +37,7 @@ function RegistrationForm() {
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
         {error && <p className="error">{error}</p>}
-        <select name="role" value={formData.role} onChange={handleChange}>
+        <select name="role" value={formData.role} onChange={handleChange} required>
           <option value="Patient">Patient</option>
           <option value="Volunteer">Volunteer</option>
         </select>
