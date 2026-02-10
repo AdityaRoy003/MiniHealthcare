@@ -8,9 +8,23 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error("MongoDB connection error:", err.message));
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 5000 // Timeout after 5s instead of 30s
+})
+  .then(() => console.log("✅ MongoDB Connected Successfully"))
+  .catch(err => {
+    console.error("❌ MongoDB Connection Error!");
+    console.error("Reason:", err.message);
+    console.error("Tip: Check if your MongoDB Atlas IP Whitelist allows access from everywhere (0.0.0.0/0)");
+  });
+
+mongoose.connection.on('error', err => {
+  console.error("Mongoose default connection error:", err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log("Mongoose default connection disconnected");
+});
 
 // Routes
 const registrationRoutes = require('./routes/registrationRoutes');
