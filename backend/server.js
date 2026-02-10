@@ -8,14 +8,15 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 5000 // Timeout after 5s instead of 30s
-})
+mongoose.set('bufferCommands', false); // Disable buffering so we see errors immediately if not connected
+
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected Successfully"))
   .catch(err => {
     console.error("❌ MongoDB Connection Error!");
-    console.error("Reason:", err.message);
-    console.error("Tip: Check if your MongoDB Atlas IP Whitelist allows access from everywhere (0.0.0.0/0)");
+    console.error("Error Name:", err.name);
+    console.error("Error Message:", err.message);
+    console.error("Check your MONGO_URI in Render Environment Variables.");
   });
 
 mongoose.connection.on('error', err => {
